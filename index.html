@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Personal profile of Alex Rivera — Full-Stack Developer building digital experiences." />
+  <title>Alex Rivera — Full-Stack Developer</title>
+
+  <!-- Google Fonts: Inter for body, Space Grotesk for headings -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Stylesheets (modular) -->
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+  <!-- ================= HEADER / NAVIGATION ================= -->
+  <header class="site-header">
+    <div class="container nav-container">
+
+      <!-- Logo / initials -->
+      <a href="#home" class="logo" aria-label="Home">
+        <span class="logo-mark">AR</span>
+      </a>
+
+      <!-- Navigation links -->
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <!-- Call-to-action button -->
+      <a href="#contact" class="btn btn-primary nav-cta">Get in Touch</a>
+
+      <!-- Mobile hamburger toggle -->
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ================= HERO SECTION ================= -->
+    <section id="home" class="hero">
+      <div class="container hero-grid">
+
+        <!-- Text content -->
+        <div class="hero-content">
+          <p class="hero-eyebrow">👋 Welcome to my corner of the web</p>
+          <h1 class="hero-title">
+            Hi, I'm <span class="accent">Alex Rivera</span> —<br />
+            Building Digital Experiences
+          </h1>
+          <p class="hero-subtitle">
+            Full-Stack Developer with 6+ years crafting fast, accessible, and
+            delightful web applications. I turn complex problems into clean,
+            scalable solutions — from pixel-perfect UI to robust APIs.
+          </p>
+
+          <!-- Action buttons -->
+          <div class="hero-actions">
+            <a href="#projects" class="btn btn-primary">View Work</a>
+            <a href="#" class="btn btn-outline">Download Resume</a>
+          </div>
+        </div>
+
+        <!-- Placeholder image / abstract graphic -->
+        <div class="hero-visual" aria-hidden="true">
+          <div class="visual-frame">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+            <div class="grid-lines"></div>
+            <div class="visual-caption">Full-Stack Developer</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= KEY STATS / HIGHLIGHTS BAR ================= -->
+    <section class="stats" aria-label="Key statistics">
+      <div class="container stats-grid">
+
+        <div class="stat-item">
+          <span class="stat-number" data-target="6">0</span>
+          <span class="stat-label">Years of Experience</span>
+        </div>
+
+        <div class="stat-item">
+          <span class="stat-number" data-target="48">0</span>
+          <span class="stat-label">Projects Completed</span>
+        </div>
+
+        <div class="stat-item">
+          <span class="stat-number" data-target="32">0</span>
+          <span class="stat-label">Satisfied Clients</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= FEATURED PROJECTS GRID ================= -->
+    <section id="projects" class="projects">
+      <div class="container">
+
+        <div class="section-heading">
+          <p class="section-eyebrow">Portfolio</p>
+          <h2 class="section-title">Featured Projects</h2>
+          <p class="section-subtitle">
+            A selection of recent work spanning web apps, design systems, and
+            developer tooling.
+          </p>
+        </div>
+
+        <div class="projects-grid">
+
+          <!-- Project Card 1 -->
+          <article class="project-card">
+            <div class="project-thumb thumb-1">
+              <span class="project-tag">Web App</span>
+            </div>
+            <div class="project-body">
+              <h3 class="project-title">Nimbus Analytics</h3>
+              <p class="project-desc">
+                Real-time analytics dashboard with custom data visualization,
+                live filtering, and team collaboration features.
+              </p>
+              <div class="project-tech">
+                <span class="tech-badge">React</span>
+                <span class="tech-badge">TypeScript</span>
+                <span class="tech-badge">Node.js</span>
+                <span class="tech-badge">PostgreSQL</span>
+              </div>
+              <a href="#" class="project-link">View Project →</a>
+            </div>
+          </article>
+
+          <!-- Project Card 2 -->
+          <article class="project-card">
+            <div class="project-thumb thumb-2">
+              <span class="project-tag">Design System</span>
+            </div>
+            <div class="project-body">
+              <h3 class="project-title">Atlas UI Kit</h3>
+              <p class="project-desc">
+                Accessible, themeable component library used across 12+
+                products, with full documentation and Storybook support.
+              </p>
+              <div class="project-tech">
+                <span class="tech-badge">Vue</span>
+                <span class="tech-badge">SCSS</span>
+                <span class="tech-badge">Storybook</span>
+              </div>
+              <a href="#" class="project-link">View Project →</a>
+            </div>
+          </article>
+
+          <!-- Project Card 3 -->
+          <article class="project-card">
+            <div class="project-thumb thumb-3">
+              <span class="project-tag">Mobile</span>
+            </div>
+            <div class="project-body">
+              <h3 class="project-title">Pulse Fitness</h3>
+              <p class="project-desc">
+                Cross-platform fitness tracking app with offline sync, social
+                challenges, and wearable device integration.
+              </p>
+              <div class="project-tech">
+                <span class="tech-badge">React Native</span>
+                <span class="tech-badge">GraphQL</span>
+                <span class="tech-badge">Firebase</span>
+              </div>
+              <a href="#" class="project-link">View Project →</a>
+            </div>
+          </article>
+
+          <!-- Project Card 4 -->
+          <article class="project-card">
+            <div class="project-thumb thumb-4">
+              <span class="project-tag">Developer Tool</span>
+            </div>
+            <div class="project-body">
+              <h3 class="project-title">ShipFast CLI</h3>
+              <p class="project-desc">
+                Open-source CLI that scaffolds production-ready full-stack
+                projects in seconds. 4k+ GitHub stars and growing.
+              </p>
+              <div class="project-tech">
+                <span class="tech-badge">Node.js</span>
+                <span class="tech-badge">TypeScript</span>
+                <span class="tech-badge">Docker</span>
+              </div>
+              <a href="#" class="project-link">View Project →</a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CORE SKILLS SECTION ================= -->
+    <section id="skills" class="skills">
+      <div class="container">
+
+        <div class="section-heading">
+          <p class="section-eyebrow">Expertise</p>
+          <h2 class="section-title">Core Skills</h2>
+          <p class="section-subtitle">
+            Technologies and tools I use to bring ideas to life.
+          </p>
+        </div>
+
+        <div class="skills-grid">
+
+          <!-- Frontend -->
+          <div class="skill-category">
+            <h3 class="skill-category-title">Frontend</h3>
+            <div class="skill-pills">
+              <span class="pill">React</span>
+              <span class="pill">Vue</span>
+              <span class="pill">TypeScript</span>
+              <span class="pill">Tailwind CSS</span>
+              <span class="pill">Next.js</span>
+              <span class="pill">Redux</span>
+            </div>
+          </div>
+
+          <!-- Backend -->
+          <div class="skill-category">
+            <h3 class="skill-category-title">Backend</h3>
+            <div class="skill-pills">
+              <span class="pill">Node.js</span>
+              <span class="pill">Python</span>
+              <span class="pill">GraphQL</span>
+              <span class="pill">PostgreSQL</span>
+              <span class="pill">MongoDB</span>
+              <span class="pill">Docker</span>
+            </div>
+          </div>
+
+          <!-- Design & Tools -->
+          <div class="skill-category">
+            <h3 class="skill-category-title">Design & Tools</h3>
+            <div class="skill-pills">
+              <span class="pill">Figma</span>
+              <span class="pill">Adobe XD</span>
+              <span class="pill">Git</span>
+              <span class="pill">CI/CD</span>
+              <span class="pill">AWS</span>
+              <span class="pill">Jest</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CONTACT / CTA ================= -->
+    <section id="contact" class="contact">
+      <div class="container contact-box">
+        <h2 class="contact-title">Let's build something great together</h2>
+        <p class="contact-subtitle">
+          I'm currently available for freelance projects and full-time roles.
+          Let's talk about your next idea.
+        </p>
+        <a href="mailto:hello@alexrivera.dev" class="btn btn-primary btn-lg">Get in Touch</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+
+      <!-- Social links -->
+      <div class="footer-social">
+        <a href="#" aria-label="GitHub" class="social-link">GitHub</a>
+        <a href="#" aria-label="LinkedIn" class="social-link">LinkedIn</a>
+        <a href="#" aria-label="X / Twitter" class="social-link">X / Twitter</a>
+        <a href="mailto:hello@alexrivera.dev" aria-label="Email" class="social-link">Email</a>
+      </div>
+
+      <!-- Quick links -->
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+    </div>
+
+    <div class="container footer-bottom">
+      <p class="copyright">© 2026 Alex Rivera. All rights reserved.</p>
+      <p class="footer-note">Designed & built with <span class="accent">♥</span></p>
+    </div>
+  </footer>
+
+  <!-- Mobile nav overlay -->
+  <div class="nav-overlay" hidden></div>
+
+  <!-- JavaScript (separate file) -->
+  <script src="js/main.js"></script>
+</body>
+</html>

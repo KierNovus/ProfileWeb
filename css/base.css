@@ -1,0 +1,114 @@
+/* ============================================================
+   BASE.CSS
+   Global reset, design tokens (CSS custom properties),
+   typography, and base element styles.
+   ============================================================ */
+
+/* ---------- Design Tokens / Custom Properties ---------- */
+:root {
+  /* Color palette — Dark slate/charcoal base */
+  --color-bg: #0f172a;            /* slate-900 — main background */
+  --color-bg-alt: #1e293b;        /* slate-800 — secondary surface */
+  --color-bg-card: #1e293b;       /* card backgrounds */
+  --color-surface: #334155;       /* slate-700 — borders / dividers */
+
+  /* Accent — Emerald green */
+  --accent: #10b981;              /* emerald-500 */
+  --accent-hover: #34d399;        /* emerald-400 */
+  --accent-soft: rgba(16, 185, 129, 0.12);   /* translucent accent for glows */
+  --accent-glow: rgba(16, 185, 129, 0.35);   /* box-shadow glow */
+
+  /* Text colors */
+  --text-primary: #f1f5f9;        /* slate-100 */
+  --text-secondary: #94a3b8;      /* slate-400 */
+  --text-muted: #64748b;          /* slate-500 */
+
+  /* Typography */
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Space Grotesk', 'Inter', sans-serif;
+
+  /* Spacing scale */
+  --space-xs: 0.5rem;    /* 8px  */
+  --space-sm: 1rem;      /* 16px */
+  --space-md: 1.5rem;    /* 24px */
+  --space-lg: 2.5rem;    /* 40px */
+  --space-xl: 4rem;      /* 64px */
+
+  /* Layout */
+  --container-max: 1140px;
+  --header-height: 72px;
+
+  /* Borders & shadows */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.25);
+  --shadow-glow: 0 0 40px var(--accent-glow);
+
+  /* Motion */
+  --transition-fast: 0.2s ease;
+  --transition-base: 0.3s ease;
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ---------- Base element styles ---------- */
+html {
+  scroll-behavior: smooth;   /* smooth scrolling for anchor links */
+  scroll-padding-top: var(--header-height);  /* offset for fixed header */
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- Typography ---------- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+p {
+  color: var(--text-secondary);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ---------- Utility / helper classes ---------- */
+.accent {
+  color: var(--accent);
+}
+
+/* Focus styles for accessibility */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
