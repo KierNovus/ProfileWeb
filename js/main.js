@@ -4,6 +4,7 @@
    Handles:
      1. Mobile navigation toggle (hamburger menu open/close)
      2. Animated stat counters (triggered on scroll via IntersectionObserver)
+     3. Contact form validation (UI/UX only — no email sending)
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -92,5 +93,128 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     observer.observe(statsSection);
+  }
+
+  /* ---------- 3. Contact Form Validation (UI/UX only) ---------- */
+  const form          = document.getElementById('contact-form');
+  const nameInput     = document.getElementById('contact-name');
+  const emailInput    = document.getElementById('contact-email');
+  const messageInput  = document.getElementById('contact-message');
+  const nameError     = document.getElementById('name-error');
+  const emailError    = document.getElementById('email-error');
+  const messageError  = document.getElementById('message-error');
+  const formStatus    = document.getElementById('form-status');
+
+  // Valid email pattern: local@domain.tld
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  /**
+   * Sets the visual validity state of a field.
+   * @param {HTMLElement} input     - The input/textarea element.
+   * @param {HTMLElement} errorEl   - The associated error message element.
+   * @param {boolean} isValid       - Whether the field is valid.
+   * @param {string}   errorMessage - Message to display when invalid.
+   */
+  const setFieldState = (input, errorEl, isValid, errorMessage) => {
+    if (isValid) {
+      input.classList.remove('invalid');
+      input.classList.add('valid');
+      errorEl.textContent = '';
+    } else {
+      input.classList.remove('valid');
+      input.classList.add('invalid');
+      errorEl.textContent = errorMessage;
+    }
+    return isValid;
+  };
+
+  /**
+   * Validates the name field.
+   * @returns {boolean} True when the name is valid.
+   */
+  const validateName = () => {
+    const value = nameInput.value.trim();
+    if (!value) {
+      return setFieldState(nameInput, nameError, false, 'Please enter your name.');
+    }
+    if (value.length < 2) {
+      return setFieldState(nameInput, nameError, false, 'Name must be at least 2 characters.');
+    }
+    return setFieldState(nameInput, nameError, true);
+  };
+
+  /**
+   * Validates the email field using a proper email pattern.
+   * @returns {boolean} True when the email is valid.
+   */
+  const validateEmail = () => {
+    const value = emailInput.value.trim();
+    if (!value) {
+      return setFieldState(emailInput, emailError, false, 'Please enter your email address.');
+    }
+    if (!EMAIL_REGEX.test(value)) {
+      return setFieldState(emailInput, emailError, false, 'Please enter a valid email address (e.g. you@example.com).');
+    }
+    return setFieldState(emailInput, emailError, true);
+  };
+
+  /**
+   * Validates the message field.
+   * @returns {boolean} True when the message is valid.
+   */
+  const validateMessage = () => {
+    const value = messageInput.value.trim();
+    if (!value) {
+      return setFieldState(messageInput, messageError, false, 'Please enter your message.');
+    }
+    if (value.length < 10) {
+      return setFieldState(messageInput, messageError, false, 'Message must be at least 10 characters.');
+    }
+    return setFieldState(messageInput, messageError, true);
+  };
+
+  /**
+   * Clears the inline error message and invalid styling for a field.
+   * Used when the user starts typing again after an error.
+   * @param {HTMLElement} input   - The input/textarea element.
+   * @param {HTMLElement} errorEl - The associated error message element.
+   */
+  const clearFieldState = (input, errorEl) => {
+    input.classList.remove('invalid', 'valid');
+    errorEl.textContent = '';
+  };
+
+  // Validate each field when the user leaves it (blur)
+  if (nameInput)    nameInput.addEventListener('blur', validateName);
+  if (emailInput)   emailInput.addEventListener('blur', validateEmail);
+  if (messageInput) messageInput.addEventListener('blur', validateMessage);
+
+  // Clear a field's error state while the user is typing
+  if (nameInput)    nameInput.addEventListener('input', () => clearFieldState(nameInput, nameError));
+  if (emailInput)   emailInput.addEventListener('input', () => clearFieldState(emailInput, emailError));
+  if (messageInput) messageInput.addEventListener('input', () => clearFieldState(messageInput, messageError));
+
+  // Handle form submission — UI/UX only, no email/backend/API
+  if (form) {
+    form.addEventListener('submit', (event) => {
+      // Prevent the page from reloading (no backend exists)
+      event.preventDefault();
+
+      // Re-validate all fields
+      const isNameValid    = validateName();
+      const isEmailValid   = validateEmail();
+      const isMessageValid = validateMessage();
+      const isFormValid    = isNameValid && isEmailValid && isMessageValid;
+
+      if (isFormValid) {
+        // All fields valid — show success feedback only (no email is sent)
+        formStatus.textContent = 'Your message is ready to send! Email delivery coming soon.';
+        formStatus.className = 'form-status success';
+      } else {
+        // Some fields invalid — show a clear error summary
+        formStatus.textContent = 'Please fix the highlighted fields above.';
+        formStatus.className = 'form-status error';
+      }
+    });
   }
 });

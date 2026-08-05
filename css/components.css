@@ -288,6 +288,29 @@
   color: var(--text-secondary);
 }
 
+/* ---------- About Section Components ---------- */
+.about-text {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.about-tech-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.about-tech-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
 /* ---------- Section Headings ---------- */
 .section-heading {
   text-align: center;
@@ -453,6 +476,85 @@
   max-width: 520px;
   margin: 0 auto var(--space-lg);
   font-size: 1.05rem;
+}
+
+/* ---------- Contact Form ---------- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  background: var(--color-bg);
+  border: 1px solid var(--color-surface);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+/* Invalid state */
+.form-input.invalid {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+/* Valid state */
+.form-input.valid {
+  border-color: var(--accent);
+}
+
+/* Error message */
+.form-error {
+  font-size: 0.85rem;
+  color: #ef4444;
+  min-height: 1.2em;
+}
+
+/* Submit button */
+.form-submit {
+  align-self: flex-start;
+}
+
+/* Form status message (success / error summary) */
+.form-status {
+  font-size: 0.95rem;
+  font-weight: 500;
+  min-height: 1.4em;
+}
+
+.form-status.success {
+  color: var(--accent);
+}
+
+.form-status.error {
+  color: #ef4444;
 }
 
 /* ---------- Footer Components ---------- */
