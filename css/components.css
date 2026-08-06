@@ -181,11 +181,21 @@
   gap: var(--space-sm);
 }
 
-/* ---------- Hero Visual (abstract graphic) ---------- */
+/* ---------- Hero Visual (fixed background image) ---------- */
+/* Anchored to the viewport so it stays visually in place while
+   the page scrolls beneath it. JS gradually blurs + fades it. */
 .hero-visual {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  height: 100svh;
+  width: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
+  pointer-events: none;   /* let clicks pass through to content */
+  z-index: 0;
 }
 
 .visual-frame {
@@ -198,6 +208,24 @@
   border: 1px solid rgba(51, 65, 85, 0.5);
   overflow: hidden;
   box-shadow: var(--shadow-card);
+}
+
+/* Profile image inside the hero visual frame.
+   Fills the frame and receives a scroll-driven blur/opacity fade.
+   JS writes --scroll-blur / --scroll-opacity; responsive breakpoints
+   can additionally tune visibility via --extra-blur and --base-opacity
+   without overriding the scroll effect. */
+.hero-profile-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+  filter: blur(calc(var(--scroll-blur, 0px) + var(--extra-blur, 0px)));
+  opacity: calc(var(--scroll-opacity, 1) * var(--base-opacity, 1));
+  will-change: filter, opacity;
 }
 
 /* Decorative orbs */
@@ -244,23 +272,6 @@
   background-size: 40px 40px;
   mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
   -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
-}
-
-/* Caption at bottom of visual */
-.visual-caption {
-  position: absolute;
-  bottom: var(--space-md);
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-heading);
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  padding: 0.4rem 1.2rem;
-  border-radius: 100px;
-  white-space: nowrap;
 }
 
 /* Float animation for orbs */

@@ -22,12 +22,22 @@
     justify-content: center;
   }
 
+  /* Fixed image becomes a subtle full-width background layer
+     so it stays "stuck" but never covers the stacked text. */
   .hero-visual {
-    order: -1;   /* show visual first on tablet */
+    width: 100%;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 96px;
   }
 
   .visual-frame {
-    max-width: 360px;
+    max-width: 340px;
+  }
+
+  .hero-profile-img {
+    /* Lower visibility on smaller screens so text stays readable */
+    --base-opacity: 0.12;
   }
 
   /* Skills: 3 columns → 1 column stack */
@@ -78,6 +88,15 @@
   .nav-links a {
     font-size: 1.05rem;
     padding: 0.5rem 0;
+  }
+
+  /* Hero: smaller visual, keep it as a faint background */
+  .visual-frame {
+    max-width: 280px;
+  }
+
+  .hero-profile-img {
+    --base-opacity: 0.1;
   }
 
   /* Stats: 3 columns → 1 column */
@@ -132,9 +151,17 @@
     width: 100%;
   }
 
-  /* Smaller visual frame */
+  /* Even smaller visual + extra subtle background */
+  .hero-visual {
+    padding-top: 72px;
+  }
+
   .visual-frame {
-    max-width: 280px;
+    max-width: 220px;
+  }
+
+  .hero-profile-img {
+    --base-opacity: 0.08;
   }
 
   /* Section spacing */
@@ -161,6 +188,25 @@
   /* Center form content on small screens */
   .contact-form {
     width: 100%;
+  }
+}
+
+/* ---------- Large Desktop (≥ 1440px) ---------- */
+@media (min-width: 1440px) {
+  /* Scale the hero visual up on very wide screens */
+  .visual-frame {
+    max-width: 460px;
+  }
+
+  /* Slightly larger section padding for a premium feel */
+  .hero {
+    padding-top: calc(var(--header-height) + var(--space-xl));
+  }
+
+  .projects,
+  .skills,
+  .contact {
+    padding: calc(var(--space-xl) + var(--space-md)) 0;
   }
 }
 

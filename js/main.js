@@ -3,8 +3,9 @@
    Client-side interactivity for the personal profile landing page.
    Handles:
      1. Mobile navigation toggle (hamburger menu open/close)
-     2. Animated stat counters (triggered on scroll via IntersectionObserver)
-     3. Contact form validation (UI/UX only — no email sending)
+     2. Hero profile image scroll effect (blur + opacity fade)
+     3. Animated stat counters (triggered on scroll via IntersectionObserver)
+     4. Contact form validation (UI/UX only — no email sending)
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -49,7 +50,59 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.addEventListener('click', () => toggleNav(false));
   }
 
-  /* ---------- 2. Animated Stat Counters ---------- */
+  /* ---------- 2. Hero Profile Image Scroll Effect ---------- */
+  const heroProfileImg = document.querySelector('.hero-profile-img');
+  const heroSection    = document.querySelector('.hero');
+
+  if (heroProfileImg && heroSection) {
+    // Respect users who prefer reduced motion — skip the effect entirely
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!prefersReducedMotion) {
+      let ticking = false;
+      const initialBlur   = 0;      // px — no blur at the top
+      const maxBlur       = 8;      // px — strongest blur once fully scrolled
+      const minOpacity    = 0.25;   // lowest opacity (still visible)
+      const scrollRange   = 600;    // px — distance over which the effect ramps up
+
+      /**
+       * Gradually blurs and fades the hero image based on how far
+       * the user has scrolled. The image stays fixed in the viewport
+       * but becomes a soft, low-visibility background layer.
+       * Uses requestAnimationFrame to throttle scroll events.
+       */
+      const updateHeroImageState = () => {
+        const scrolled = window.scrollY;
+
+        // Clamp progress between 0 and 1
+        const progress = Math.min(scrolled / scrollRange, 1);
+
+        // Interpolate blur (0px → 8px) and opacity (1 → 0.25)
+        const blur    = initialBlur + (maxBlur - initialBlur) * progress;
+        const opacity = 1 - (1 - minOpacity) * progress;
+
+        // Write CSS custom properties — the stylesheet combines these
+        // with responsive overrides (--extra-blur / --base-opacity)
+        heroProfileImg.style.setProperty('--scroll-blur', `${blur.toFixed(2)}px`);
+        heroProfileImg.style.setProperty('--scroll-opacity', opacity.toFixed(3));
+
+        ticking = false;
+      };
+
+      // Throttle scroll handling with requestAnimationFrame
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(updateHeroImageState);
+          ticking = true;
+        }
+      }, { passive: true });
+
+      // Set the initial state on page load
+      updateHeroImageState();
+    }
+  }
+
+  /* ---------- 3. Animated Stat Counters ---------- */
   const counters = document.querySelectorAll('.stat-number');
 
   /**
@@ -95,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(statsSection);
   }
 
-  /* ---------- 3. Contact Form Validation (UI/UX only) ---------- */
+  /* ---------- 4. Contact Form Validation (UI/UX only) ---------- */
   const form          = document.getElementById('contact-form');
   const nameInput     = document.getElementById('contact-name');
   const emailInput    = document.getElementById('contact-email');
