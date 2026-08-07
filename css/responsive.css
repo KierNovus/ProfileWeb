@@ -112,10 +112,17 @@
   }
 
   /* Video: person stays toward the right, slightly dimmer on mobile
-     so text remains readable. Crops edges (not the person).
-     Shifted slightly right so more of the person is visible. */
+     so text remains readable. The video element is widened to ~170%
+     of the viewport so object-fit: cover shows a much larger
+     horizontal slice of the MP4 — revealing substantially more of
+     the person while keeping them anchored to the right side. */
   .bg-video {
-    object-position: 90% center;
+    width: 170%;
+    height: 100%;
+    left: 0;
+    right: auto;
+    object-fit: cover;
+    object-position: right center;
     opacity: 0.22;
   }
 
@@ -180,11 +187,16 @@
     height: 20px;
   }
 
-  /* More aggressive right-bias crop on very small screens so
-     the person stays visible without covering the content.
-     Shifted slightly right so more of the person is visible. */
+  /* On very small screens, widen the video element even further
+     (~190%) so an even larger portion of the MP4 frame is visible,
+     making the person clearly recognizable while staying right. */
   .bg-video {
-    object-position: 95% center;
+    width: 190%;
+    height: 100%;
+    left: 0;
+    right: auto;
+    object-fit: cover;
+    object-position: right center;
     opacity: 0.2;
   }
 }
