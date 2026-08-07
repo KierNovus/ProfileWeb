@@ -1,93 +1,81 @@
 /* ============================================================
    LAYOUT.CSS
-   Page-level structure: container, header, hero, stats,
-   projects, skills, contact, and footer layouts.
+   Page-level structure: container, hero, stats, projects,
+   skills, contact, and footer layouts.
    ============================================================ */
 
-/* ---------- Container ---------- */
+/* ---------- Container ----------
+   Content stays left-aligned. The video fills the viewport
+   behind it (right side reserved for the person). */
 .container {
   width: 100%;
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 var(--space-md);
-}
-
-/* ---------- Header / Navigation ---------- */
-.site-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  height: var(--header-height);
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(51, 65, 85, 0.4);
-}
-
-.nav-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 100%;
+  padding: 0 clamp(1.25rem, 3vw, 2rem);
 }
 
 /* ---------- Hero Section ---------- */
 .hero {
   position: relative;
   min-height: 100vh;
-  min-height: 100svh;   /* mobile-friendly viewport height */
+  min-height: 100svh;
   display: flex;
   align-items: center;
-  padding: calc(var(--header-height) + var(--space-lg)) 0 var(--space-xl);
-  background:
-    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(16, 185, 129, 0.08), transparent),
-    var(--color-bg);
+  justify-content: flex-start;
+  padding: var(--space-xl) 0;
+  z-index: 10;
 }
 
 .hero-grid {
   position: relative;
-  z-index: 1;   /* keep text above the fixed background image */
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-xl);
-  align-items: center;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
   width: 100%;
+  max-width: 62%;          /* leaves the right side for the person */
+  margin-left: 0;          /* ensure content hugs the left edge */
 }
 
-/* ---------- Stats / Highlights Bar ---------- */
+/* ---------- Stats / Highlights Bar ----------
+   Left-aligned, no box/background. */
 .stats {
-  background: var(--color-bg-alt);
-  border-top: 1px solid rgba(51, 65, 85, 0.4);
-  border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+  position: relative;
+  z-index: 10;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
   padding: var(--space-lg) 0;
 }
 
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-md);
-  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xl);
+  text-align: left;
+  max-width: 720px;
 }
 
-/* ---------- About Section ---------- */
+/* ---------- About Section ----------
+   No card/box — just text flowing over the fixed video. */
 .about {
+  position: relative;
+  z-index: 10;
   padding: var(--space-xl) 0;
-  background: var(--color-bg-alt);
-  border-top: 1px solid rgba(51, 65, 85, 0.4);
-  border-bottom: 1px solid rgba(51, 65, 85, 0.4);
 }
 
 .about-content {
-  max-width: 760px;
-  margin: 0 auto;
-  text-align: center;
+  max-width: 720px;        /* content only occupies the left area */
+  margin: 0;
+  text-align: left;
 }
 
 .about-tech {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   flex-wrap: wrap;
   gap: var(--space-lg);
   margin-top: var(--space-lg);
@@ -95,74 +83,140 @@
 
 /* ---------- Projects Section ---------- */
 .projects {
+  position: relative;
+  z-index: 10;
   padding: var(--space-xl) 0;
 }
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-lg);
+  max-width: 80%;          /* keeps cards out of the far-right person area */
 }
 
 /* ---------- Skills Section ---------- */
 .skills {
+  position: relative;
+  z-index: 10;
   padding: var(--space-xl) 0;
-  background: var(--color-bg-alt);
-  border-top: 1px solid rgba(51, 65, 85, 0.4);
-  border-bottom: 1px solid rgba(51, 65, 85, 0.4);
 }
 
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-md);
+  max-width: 80%;
 }
 
-/* ---------- Contact / Form Section ---------- */
+/* ---------- Contact / Form Section ----------
+   No large box — the video stays visible behind the form. */
 .contact {
+  position: relative;
+  z-index: 10;
   padding: var(--space-xl) 0;
 }
 
 .contact-box {
-  text-align: center;
-  background: var(--color-bg-card);
-  border: 1px solid rgba(51, 65, 85, 0.5);
-  border-radius: var(--radius-lg);
-  padding: var(--space-xl) var(--space-md);
-  box-shadow: var(--shadow-card);
+  text-align: left;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
 }
 
 .contact-form {
-  max-width: 560px;
-  margin: 0 auto;
+  max-width: 620px;
+  margin: 0;
   text-align: left;
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
 }
 
-/* ---------- Footer ---------- */
+/* ---------- Footer ----------
+   Social links only — no copyright line, no "built with ♥". */
 .site-footer {
-  background: var(--color-bg-alt);
-  border-top: 1px solid rgba(51, 65, 85, 0.4);
-  padding: var(--space-lg) 0 var(--space-md);
+  position: relative;
+  z-index: 10;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+  padding: var(--space-lg) 0 calc(var(--space-xl) + 100px);
 }
 
 .footer-grid {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: wrap;
   gap: var(--space-md);
-  padding-bottom: var(--space-md);
-  border-bottom: 1px solid rgba(51, 65, 85, 0.4);
 }
 
-.footer-bottom {
+/* ============================================================
+   BOTTOM NAVIGATION
+   ONE fixed, centered, compact glass pill at the bottom.
+   z-index 50 (above all backgrounds and content).
+   ============================================================ */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-  padding-top: var(--space-md);
+  gap: 10px;               /* wider gaps between items */
+  padding: 8px 14px;       /* wider overall pill */
+  background: rgba(8, 14, 25, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 100px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 0 14px rgba(34, 211, 238, 0.10);
+  white-space: nowrap;
+}
+
+.bottom-nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 20px;      /* more horizontal breathing room */
+  border-radius: 100px;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+.bottom-nav-link .nav-icon {
+  width: 18px;
+  height: 18px;
+  transition: transform var(--transition-base);
+}
+
+.bottom-nav-link:hover {
+  color: var(--text-primary);
+}
+
+.bottom-nav-link:hover .nav-icon {
+  transform: translateY(-2px);
+}
+
+/* Active section highlight */
+.bottom-nav-link.active {
+  color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 0 14px var(--accent-glow);
+}
+
+.bottom-nav-link.active .nav-icon {
+  filter: drop-shadow(0 0 6px var(--accent-glow));
 }

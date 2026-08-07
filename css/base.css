@@ -1,27 +1,30 @@
 /* ============================================================
    BASE.CSS
    Global reset, design tokens (CSS custom properties),
-   typography, and base element styles.
+   typography, base element styles, and the fixed MP4
+   motion background scene with seamless-loop layering.
    ============================================================ */
 
 /* ---------- Design Tokens / Custom Properties ---------- */
 :root {
-  /* Color palette — Dark slate/charcoal base */
-  --color-bg: #0f172a;            /* slate-900 — main background */
-  --color-bg-alt: #1e293b;        /* slate-800 — secondary surface */
-  --color-bg-card: #1e293b;       /* card backgrounds */
-  --color-surface: #334155;       /* slate-700 — borders / dividers */
+  /* Color palette — deep cinematic navy/indigo base */
+  --color-bg: #0a0e1a;            /* deep space navy */
+  --color-bg-card: rgba(15, 23, 42, 0.35); /* glass card backgrounds */
 
-  /* Accent — Emerald green */
-  --accent: #10b981;              /* emerald-500 */
-  --accent-hover: #34d399;        /* emerald-400 */
-  --accent-soft: rgba(16, 185, 129, 0.12);   /* translucent accent for glows */
-  --accent-glow: rgba(16, 185, 129, 0.35);   /* box-shadow glow */
+  /* Accent — neon cyan/teal extracted from the MP4 artwork */
+  --accent: #22d3ee;              /* cyan-400 */
+  --accent-hover: #67e8f9;        /* cyan-300 */
+  --accent-soft: rgba(34, 211, 238, 0.12);   /* translucent accent for glows */
+  --accent-glow: rgba(34, 211, 238, 0.35);   /* box-shadow glow */
+
+  /* Secondary accent — soft violet for depth */
+  --accent-secondary-soft: rgba(167, 139, 250, 0.12);
+  --accent-secondary-glow: rgba(167, 139, 250, 0.3);
 
   /* Text colors */
   --text-primary: #f1f5f9;        /* slate-100 */
-  --text-secondary: #94a3b8;      /* slate-400 */
-  --text-muted: #64748b;          /* slate-500 */
+  --text-secondary: #cbd5e1;      /* slate-300 — brighter for readability */
+  --text-muted: #94a3b8;          /* slate-400 */
 
   /* Typography */
   --font-body: 'Inter', system-ui, -apple-system, sans-serif;
@@ -36,18 +39,24 @@
 
   /* Layout */
   --container-max: 1280px;
-  --header-height: 72px;
 
   /* Borders & shadows */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 20px;
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.25);
-  --shadow-glow: 0 0 40px var(--accent-glow);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --glass-blur: blur(8px);
+  --glass-border: 1px solid rgba(148, 163, 184, 0.14);
+
+  /* Text readability over motion background */
+  --text-shadow-soft: 0 1px 2px rgba(2, 6, 23, 0.5), 0 2px 24px rgba(2, 6, 23, 0.55);
 
   /* Motion */
   --transition-fast: 0.2s ease;
   --transition-base: 0.3s ease;
+
+  /* Seamless-loop crossfade window (CSS transition duration) */
+  --video-fade: 0.85s ease-in-out;
 }
 
 /* ---------- Reset ---------- */
@@ -62,7 +71,6 @@
 /* ---------- Base element styles ---------- */
 html {
   scroll-behavior: smooth;   /* smooth scrolling for anchor links */
-  scroll-padding-top: var(--header-height);  /* offset for fixed header */
 }
 
 body {
@@ -73,6 +81,14 @@ body {
   background-color: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;   /* prevent horizontal scroll from background */
+  position: relative;
+}
+
+/* Content sits above the fixed background scene */
+main {
+  position: relative;
+  z-index: 10;
 }
 
 /* ---------- Typography ---------- */
@@ -111,4 +127,107 @@ img {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: var(--radius-sm);
+}
+
+/* ============================================================
+   FIXED MP4 MOTION BACKGROUND SCENE
+   Layering (global z-index):
+     1 → .bg-scene            (fixed MP4 + overlay layers)
+     2 → overlays/vignette    (inside the scene, above videos)
+    10 → main content
+    50 → fixed bottom navigation
+   The entire scene is pointer-events: none so it never
+   intercepts clicks, and it dims together as the user scrolls.
+   ============================================================ */
+
+.bg-scene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  height: 100svh;
+  z-index: 1;                 /* behind content (10) and nav (50) */
+  overflow: hidden;
+  pointer-events: none;       /* never blocks clicks */
+  background-color: var(--color-bg);
+  will-change: opacity, filter; /* Home↔lower-section switch is GPU-composited */
+  transition: opacity 0.4s ease, filter 0.4s ease; /* short smooth switch */
+}
+
+/*
+   Two identical <video> layers enable a seamless loop:
+   when the visible video nears its end, it crossfades into
+   the second video which is starting from frame 0. This masks
+   any mismatch between the final and first frame so the motion
+   reads as one continuous flow instead of a jumpy restart.
+*/
+.bg-video {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;          /* cover the viewport, never stretch */
+  object-position: right center; /* keep the person on the right */
+  opacity: 0;
+  transition: opacity var(--video-fade);
+  will-change: opacity;
+}
+
+.bg-video.is-visible {
+  opacity: 1;
+}
+
+/* Readability overlay — darker on the left (text side),
+   lighter on the right so the person stays clearly visible. */
+.bg-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(90deg,
+      rgba(2, 6, 23, 0.82) 0%,
+      rgba(2, 6, 23, 0.5) 34%,
+      rgba(2, 6, 23, 0.18) 62%,
+      rgba(2, 6, 23, 0.3) 100%);
+}
+
+/* Subtle cinematic top/bottom vignette for depth */
+.bg-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(180deg,
+      rgba(2, 6, 23, 0.35) 0%,
+      transparent 22%,
+      transparent 72%,
+      rgba(2, 6, 23, 0.55) 100%);
+}
+
+/* ---------- Reduced Motion (accessibility) ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Static frame instead of motion background */
+  .bg-video {
+    display: none;
+  }
+
+  .bg-scene {
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(34, 211, 238, 0.1), transparent 60%),
+      linear-gradient(90deg, rgba(2, 6, 23, 0.9) 0%, rgba(2, 6, 23, 0.55) 40%, rgba(2, 6, 23, 0.3) 100%),
+      var(--color-bg);
+  }
 }

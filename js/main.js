@@ -2,114 +2,165 @@
    MAIN.JS
    Client-side interactivity for the personal profile landing page.
    Handles:
-     1. Mobile navigation toggle (hamburger menu open/close)
-     2. Hero profile image scroll effect (blur + opacity fade)
-     3. Animated stat counters (triggered on scroll via IntersectionObserver)
-     4. Contact form validation (UI/UX only — no email sending)
+     1. Seamless MP4 loop (two-video crossfade)
+     2. Bottom navigation scroll-spy (auto-highlight active section)
+     3. Background scene dimming on scroll
+     4. Animated stat counters (triggered on scroll via IntersectionObserver)
+     5. Contact form validation (UI/UX only — no email sending)
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* ---------- 1. Mobile Navigation Toggle ---------- */
-  const toggleBtn = document.querySelector('.nav-toggle');
-  const navLinks  = document.querySelector('.nav-links');
-  const overlay   = document.querySelector('.nav-overlay');
+  /* ==========================================================
+     1. SEAMLESS MP4 LOOP
+     Two <video> elements share the same source. When the
+     currently-visible video nears its end, we crossfade into
+     the other video which is starting from frame 0. This masks
+     any mismatch between the final and first frame so the
+     motion reads as one continuous flow instead of a jumpy
+     restart (no 1-second freeze, no blank frame).
+     ========================================================== */
+  const videoA = document.getElementById('bg-video-a');
+  const videoB = document.getElementById('bg-video-b');
+  const videos = [videoA, videoB].filter(Boolean);
 
-  /**
-   * Opens or closes the mobile navigation panel.
-   * @param {boolean} forceOpen - If provided, forces open (true) or closed (false).
-   */
-  const toggleNav = (forceOpen) => {
-    const isOpen = (forceOpen !== undefined)
-      ? forceOpen
-      : !navLinks.classList.contains('open');
+  // Crossfade window (seconds before the end of the video).
+  // Must be ≥ the CSS transition duration (--video-fade: 0.85s).
+  const FADE_WINDOW = 1.0;
 
-    navLinks.classList.toggle('open', isOpen);
-    toggleBtn.classList.toggle('active', isOpen);
-    toggleBtn.setAttribute('aria-expanded', String(isOpen));
-    overlay.hidden = !isOpen;
+  // Which video is currently visible (A starts visible).
+  let activeIndex = 0;
 
-    // Prevent body scroll while menu is open
-    document.body.style.overflow = isOpen ? 'hidden' : '';
+  if (videos.length === 2) {
+    // Start with A visible, B hidden but preloaded.
+    videoA.classList.add('is-visible');
+    videoB.classList.remove('is-visible');
+
+    // Pause B until it's needed (saves CPU).
+    videoB.pause();
+
+    // Slow the motion to ~0.6x for a calm, cinematic feel.
+    videos.forEach((v) => {
+      v.playbackRate = 0.6;
+    });
+
+    const swap = () => {
+      const nextIndex = activeIndex === 0 ? 1 : 0;
+      const current = videos[activeIndex];
+      const next = videos[nextIndex];
+
+      // Restart the incoming video from the beginning.
+      next.currentTime = 0;
+      next.play().catch(() => {});
+
+      // Crossfade: incoming fades in, outgoing fades out.
+      next.classList.add('is-visible');
+      current.classList.remove('is-visible');
+
+      activeIndex = nextIndex;
+    };
+
+    // When the visible video is within FADE_WINDOW of its end,
+    // trigger the crossfade into the other video.
+    const checkLoop = () => {
+      const current = videos[activeIndex];
+      if (current && !current.paused && !current.ended) {
+        const remaining = current.duration - current.currentTime;
+        if (remaining <= FADE_WINDOW) {
+          swap();
+        }
+      }
+    };
+
+    // Poll a few times per second — cheap and reliable.
+    setInterval(checkLoop, 150);
+
+    // Also handle the edge case where the video ends before
+    // the interval fires (e.g. slow device).
+    videos.forEach((v) => {
+      v.addEventListener('ended', () => {
+        if (v === videos[activeIndex]) swap();
+      });
+    });
+  } else if (videos.length === 1) {
+    // Fallback: single video with native loop.
+    videos[0].classList.add('is-visible');
+  }
+
+  /* ==========================================================
+     2. BOTTOM NAVIGATION SCROLL-SPY
+     ========================================================== */
+  const navLinks = document.querySelectorAll('.bottom-nav-link');
+  const sections = document.querySelectorAll('section[id]');
+
+  const updateActiveNav = () => {
+    const scrollPos = window.scrollY + window.innerHeight * 0.35;
+
+    sections.forEach((section) => {
+      const sectionTop = section.offsetTop;
+      const sectionBottom = sectionTop + section.offsetHeight;
+
+      if (scrollPos >= sectionTop && scrollPos < sectionBottom) {
+        const id = section.getAttribute('id');
+        navLinks.forEach((link) => {
+          link.classList.toggle('active', link.dataset.section === id);
+        });
+      }
+    });
   };
 
-  // Click hamburger to toggle
-  if (toggleBtn) {
-    toggleBtn.addEventListener('click', () => toggleNav());
-  }
+  /* ==========================================================
+     3. BACKGROUND SCENE DIMMING ON SCROLL
+     The whole .bg-scene (video + overlays) dims together as
+     the user scrolls. At the top it's clearly visible; deeper
+     sections become subtle but never fully hidden.
+     ========================================================== */
+  const bgScene = document.querySelector('.bg-scene');
 
-  // Click a nav link → close menu
-  if (navLinks) {
-    navLinks.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => toggleNav(false));
-    });
-  }
+  // Fixed blurred state applied to ALL sections below Home.
+  const LOWER_OPACITY = 0.35;
+  const LOWER_BLUR    = 7;   // px — subtle but slightly stronger than before
 
-  // Click overlay → close menu
-  if (overlay) {
-    overlay.addEventListener('click', () => toggleNav(false));
-  }
+  const updateBackgroundEffect = () => {
+    const hero = document.getElementById('home');
+    const heroBottom = hero ? hero.offsetTop + hero.offsetHeight : window.innerHeight;
 
-  /* ---------- 2. Hero Profile Image Scroll Effect ---------- */
-  const heroProfileImg = document.querySelector('.hero-profile-img');
-  const heroSection    = document.querySelector('.hero');
+    // Home: clear + high visibility. Below Home: fixed blurred state.
+    const isHome = window.scrollY < heroBottom - window.innerHeight * 0.5;
 
-  if (heroProfileImg && heroSection) {
-    // Respect users who prefer reduced motion — skip the effect entirely
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (!prefersReducedMotion) {
-      let ticking = false;
-      const initialBlur   = 0;      // px — no blur at the top
-      const maxBlur       = 8;      // px — strongest blur once fully scrolled
-      const minOpacity    = 0.25;   // lowest opacity (still visible)
-      const scrollRange   = 600;    // px — distance over which the effect ramps up
-
-      /**
-       * Gradually blurs and fades the hero image based on how far
-       * the user has scrolled. The image stays fixed in the viewport
-       * but becomes a soft, low-visibility background layer.
-       * Uses requestAnimationFrame to throttle scroll events.
-       */
-      const updateHeroImageState = () => {
-        const scrolled = window.scrollY;
-
-        // Clamp progress between 0 and 1
-        const progress = Math.min(scrolled / scrollRange, 1);
-
-        // Interpolate blur (0px → 8px) and opacity (1 → 0.25)
-        const blur    = initialBlur + (maxBlur - initialBlur) * progress;
-        const opacity = 1 - (1 - minOpacity) * progress;
-
-        // Write CSS custom properties — the stylesheet combines these
-        // with responsive overrides (--extra-blur / --base-opacity)
-        heroProfileImg.style.setProperty('--scroll-blur', `${blur.toFixed(2)}px`);
-        heroProfileImg.style.setProperty('--scroll-opacity', opacity.toFixed(3));
-
-        ticking = false;
-      };
-
-      // Throttle scroll handling with requestAnimationFrame
-      window.addEventListener('scroll', () => {
-        if (!ticking) {
-          window.requestAnimationFrame(updateHeroImageState);
-          ticking = true;
-        }
-      }, { passive: true });
-
-      // Set the initial state on page load
-      updateHeroImageState();
+    if (bgScene) {
+      if (isHome) {
+        bgScene.style.opacity = '1';
+        bgScene.style.filter = 'blur(0px)';
+      } else {
+        bgScene.style.opacity = String(LOWER_OPACITY);
+        bgScene.style.filter = `blur(${LOWER_BLUR}px)`;
+      }
     }
-  }
+  };
 
-  /* ---------- 3. Animated Stat Counters ---------- */
+  // Throttle scroll handling with requestAnimationFrame
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        updateActiveNav();
+        updateBackgroundEffect();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+
+  // Set initial state on page load
+  updateActiveNav();
+  updateBackgroundEffect();
+
+  /* ==========================================================
+     4. ANIMATED STAT COUNTERS
+     ========================================================== */
   const counters = document.querySelectorAll('.stat-number');
 
-  /**
-   * Animates a counter element from 0 to its data-target value.
-   * Uses requestAnimationFrame with ease-out cubic easing.
-   * @param {HTMLElement} el - The element with data-target attribute.
-   */
   const animateCounter = (el) => {
     const target  = Number(el.dataset.target);
     const startTime = performance.now();
@@ -117,20 +168,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const tick = (now) => {
       const progress = Math.min((now - startTime) / duration, 1);
-      // Ease-out cubic for smooth slowdown
       const eased = 1 - Math.pow(1 - progress, 3);
       el.textContent = Math.floor(eased * target);
       if (progress < 1) {
         requestAnimationFrame(tick);
       } else {
-        el.textContent = target; // ensure exact final value
+        el.textContent = target;
       }
     };
 
     requestAnimationFrame(tick);
   };
 
-  // Use IntersectionObserver to fire counters when the stats section becomes visible
   const statsSection = document.querySelector('.stats');
   if (statsSection && counters.length) {
     const observer = new IntersectionObserver(
@@ -138,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             counters.forEach(animateCounter);
-            observer.unobserve(entry.target); // run only once
+            observer.unobserve(entry.target);
           }
         });
       },
@@ -148,7 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(statsSection);
   }
 
-  /* ---------- 4. Contact Form Validation (UI/UX only) ---------- */
+  /* ==========================================================
+     5. CONTACT FORM VALIDATION (UI/UX only)
+     ========================================================== */
   const form          = document.getElementById('contact-form');
   const nameInput     = document.getElementById('contact-name');
   const emailInput    = document.getElementById('contact-email');
@@ -158,16 +209,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const messageError  = document.getElementById('message-error');
   const formStatus    = document.getElementById('form-status');
 
-  // Valid email pattern: local@domain.tld
   const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  /**
-   * Sets the visual validity state of a field.
-   * @param {HTMLElement} input     - The input/textarea element.
-   * @param {HTMLElement} errorEl   - The associated error message element.
-   * @param {boolean} isValid       - Whether the field is valid.
-   * @param {string}   errorMessage - Message to display when invalid.
-   */
   const setFieldState = (input, errorEl, isValid, errorMessage) => {
     if (isValid) {
       input.classList.remove('invalid');
@@ -181,10 +224,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return isValid;
   };
 
-  /**
-   * Validates the name field.
-   * @returns {boolean} True when the name is valid.
-   */
   const validateName = () => {
     const value = nameInput.value.trim();
     if (!value) {
@@ -196,10 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return setFieldState(nameInput, nameError, true);
   };
 
-  /**
-   * Validates the email field using a proper email pattern.
-   * @returns {boolean} True when the email is valid.
-   */
   const validateEmail = () => {
     const value = emailInput.value.trim();
     if (!value) {
@@ -211,10 +246,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return setFieldState(emailInput, emailError, true);
   };
 
-  /**
-   * Validates the message field.
-   * @returns {boolean} True when the message is valid.
-   */
   const validateMessage = () => {
     const value = messageInput.value.trim();
     if (!value) {
@@ -226,45 +257,32 @@ document.addEventListener('DOMContentLoaded', () => {
     return setFieldState(messageInput, messageError, true);
   };
 
-  /**
-   * Clears the inline error message and invalid styling for a field.
-   * Used when the user starts typing again after an error.
-   * @param {HTMLElement} input   - The input/textarea element.
-   * @param {HTMLElement} errorEl - The associated error message element.
-   */
   const clearFieldState = (input, errorEl) => {
     input.classList.remove('invalid', 'valid');
     errorEl.textContent = '';
   };
 
-  // Validate each field when the user leaves it (blur)
   if (nameInput)    nameInput.addEventListener('blur', validateName);
   if (emailInput)   emailInput.addEventListener('blur', validateEmail);
   if (messageInput) messageInput.addEventListener('blur', validateMessage);
 
-  // Clear a field's error state while the user is typing
   if (nameInput)    nameInput.addEventListener('input', () => clearFieldState(nameInput, nameError));
   if (emailInput)   emailInput.addEventListener('input', () => clearFieldState(emailInput, emailError));
   if (messageInput) messageInput.addEventListener('input', () => clearFieldState(messageInput, messageError));
 
-  // Handle form submission — UI/UX only, no email/backend/API
   if (form) {
     form.addEventListener('submit', (event) => {
-      // Prevent the page from reloading (no backend exists)
       event.preventDefault();
 
-      // Re-validate all fields
       const isNameValid    = validateName();
       const isEmailValid   = validateEmail();
       const isMessageValid = validateMessage();
       const isFormValid    = isNameValid && isEmailValid && isMessageValid;
 
       if (isFormValid) {
-        // All fields valid — show success feedback only (no email is sent)
         formStatus.textContent = 'Your message is ready to send! Email delivery coming soon.';
         formStatus.className = 'form-status success';
       } else {
-        // Some fields invalid — show a clear error summary
         formStatus.textContent = 'Please fix the highlighted fields above.';
         formStatus.className = 'form-status error';
       }
