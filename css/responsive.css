@@ -112,9 +112,10 @@
   }
 
   /* Video: person stays toward the right, slightly dimmer on mobile
-     so text remains readable. Crops edges (not the person). */
+     so text remains readable. Crops edges (not the person).
+     Shifted slightly right so more of the person is visible. */
   .bg-video {
-    object-position: 82% center;
+    object-position: 90% center;
     opacity: 0.22;
   }
 
@@ -180,9 +181,10 @@
   }
 
   /* More aggressive right-bias crop on very small screens so
-     the person stays visible without covering the content. */
+     the person stays visible without covering the content.
+     Shifted slightly right so more of the person is visible. */
   .bg-video {
-    object-position: 88% center;
+    object-position: 95% center;
     opacity: 0.2;
   }
 }
