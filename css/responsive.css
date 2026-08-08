@@ -201,6 +201,38 @@
   }
 }
 
+/* ---------- iPad Mini (portrait, 768px) ----------
+   The mobile rule (≤768px) widens the video to 170%, which shows a
+   leftward slice of the MP4 and pushes the person too far RIGHT
+   (nearly off-screen). Override with a narrower width so a more
+   rightward slice is visible, bringing the person into view and
+   toward the left. */
+@media (min-width: 768px) and (max-width: 819px) and (orientation: portrait) {
+  .bg-video {
+    width: 137%;
+    height: 100%;
+    left: 0;
+    right: auto;
+    object-fit: cover;
+    object-position: right center;
+  }
+}
+
+/* ---------- iPad Air / iPad Pro (portrait, 820px+) ----------
+   The base rule (width:100%) shows only the rightmost slice of the
+   MP4, pushing the person too far LEFT. Widen the video so a more
+   leftward slice is visible, moving the person toward the RIGHT. */
+@media (min-width: 820px) and (max-width: 1366px) and (orientation: portrait) {
+  .bg-video {
+    width: 140%;
+    height: 100%;
+    left: 0;
+    right: auto;
+    object-fit: cover;
+    object-position: right center;
+  }
+}
+
 /* ---------- Large Desktop (≥ 1440px) ---------- */
 @media (min-width: 1440px) {
   .hero {
